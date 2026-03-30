@@ -1,0 +1,61 @@
+import boto3
+from PIL import Image, ImageDraw, ImageFont
+import io
+import base64
+import uuid
+from datetime import datetime
+
+s3 = boto3.client('s3')
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table("images")
+PROCESSED_BUCKET = "img-processed-1"
+
+def lambda_handler(event, context):
+    # Safely get resized_image and filename
+    img_base64 = event.get('resized_image')
+    filename = event.get('filename')
+
+    if not img_base64 or not filename:
+        return {
+            "error": "Missing 'resized_image' or 'filename' in event",
+            "event": event
+        }
+
+    try:
+        # Decode image
+        img_data = base64.b64decode(img_base64)
+        img = Image.open(io.BytesIO(img_data))
+
+        # Add watermark
+        draw = ImageDraw.Draw(img)
+        text = "Watermark"
+        font = ImageFont.load_default()
+        draw.text((10, 10), text, font=font, fill=(255, 0, 0))
+
+        # Save to bytes buffer
+        buffer = io.BytesIO()
+        img.save(buffer, format=img.format)
+        buffer.seek(0)
+
+        # Upload to processed S3 bucket
+        s3.put_object(Bucket=PROCESSED_BUCKET, Key=filename, Body=buffer)
+
+        # Write to DynamoDB
+        item = {
+            "image-id": str(uuid.uuid4()),
+            "filename": filename,
+            "processed_bucket": PROCESSED_BUCKET,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        table.put_item(Item=item)
+
+        return {
+            "status": "done",
+            "processed_key": filename
+        }
+
+    except Exception as e:
+        return {
+            "error": str(e),
+            "event": event
+        }
