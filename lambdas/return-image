@@ -1,0 +1,44 @@
+import boto3
+import os
+
+s3 = boto3.client('s3')
+PROCESSED_BUCKET = "img-processed-1"
+
+def lambda_handler(event, context):
+    """
+    Expects query parameter 'filename' in the API request:
+    GET /processed?filename=<filename>
+    """
+
+    # 1. Get filename from query string
+    filename = event.get('queryStringParameters', {}).get('filename')
+    if not filename:
+        return {
+            "statusCode": 400,
+            "body": "Missing 'filename' query parameter"
+        }
+
+    try:
+        # 2. Generate presigned URL valid for 1 hour
+        url = s3.generate_presigned_url(
+            ClientMethod='get_object',
+            Params={'Bucket': PROCESSED_BUCKET, 'Key': filename},
+            ExpiresIn=3600
+        )
+
+        # 3. Return URL
+        return {
+            "statusCode": 200,
+            "body": url
+        }
+
+    except s3.exceptions.NoSuchKey:
+        return {
+            "statusCode": 404,
+            "body": f"File '{filename}' not found in processed bucket"
+        }
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "body": str(e)
+        }
