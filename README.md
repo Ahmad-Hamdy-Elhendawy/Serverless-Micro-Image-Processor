@@ -67,19 +67,19 @@ image-processing-pipeline/
 
 ```bash
 git clone https://github.com/Ahmad-Hamdy-Elhendawy/Serverless-Micro-Image-Processor
-cd image-processing-pipeline
+cd Serverless-Micro-Image-Processor
 ```
 
 **2. Make the client script executable**
 
 ```bash
-chmod +x scripts/client.sh
+chmod +x scripts/upload-image.sh
 ```
 
 **3. Run the script and enter your image path when prompted**
 
 ```bash
-./scripts/client.sh
+./scripts/upload-image.sh
 ```
 
 ### Example Output
