@@ -23,7 +23,7 @@ A fully serverless image processing pipeline on AWS. Upload an image, get back a
 
 ---
 
-## 🔄 Workflow
+##  Workflow
 
 1. **Client** requests a presigned upload URL via API Gateway
 2. **Image** is uploaded directly to S3
@@ -43,16 +43,17 @@ image-processing-pipeline/
 ├── demo.mp4
 │
 ├── lambdas/
-│   ├── upload-url/
-│   ├── resize/
-│   ├── watermark/
+│   ├── URL-Generator/
+│   ├── Image-Processor-Function/
+│   ├── LambdaWatermark/
+    ├── stepfn-start/
 │   └── return-image/
 │
-├── step-functions/
-│   └── state-machine.json
+├── StepFunction/
+│   └── StateMachine.json
 │
-├── scripts/
-│   └── client.sh
+├── Bash Script/
+│   └── upload-image.sh
 │
 └── docs/
     └── notes.md
@@ -103,7 +104,7 @@ https://<processed-image-url>
 
 ---
 
-## 🔮 Future Improvements
+##  Future Improvements
 
 - [ ] Replace polling with event-based notifications (SQS/SNS)
 - [ ] Use DynamoDB for job status tracking
@@ -111,7 +112,7 @@ https://<processed-image-url>
 
 ---
 
-## 📌 Outcome
+##  Outcome
 
 This project demonstrates a complete serverless image processing pipeline on AWS, covering event-driven architecture, workflow orchestration, secure file handling, and the use of Lambda Layers for external dependencies.
 
