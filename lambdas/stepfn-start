@@ -1,0 +1,18 @@
+import boto3
+import json
+
+sfn = boto3.client('stepfunctions')
+
+STATE_MACHINE_ARN = "arn:aws:states:us-east-1:431451851290:stateMachine:lambda-starter-calls-this-state-machine"
+
+def lambda_handler(event, context):
+    print("Received event:", json.dumps(event))
+    response = sfn.start_execution(
+        stateMachineArn=STATE_MACHINE_ARN,
+        input=json.dumps(event)
+    )
+    print("Step Function execution ARN:", response['executionArn'])
+    return {
+        "statusCode": 200,
+        "body": json.dumps({"executionArn": response['executionArn']})
+    }
