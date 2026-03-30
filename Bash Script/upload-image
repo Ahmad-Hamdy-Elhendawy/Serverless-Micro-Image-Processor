@@ -1,0 +1,52 @@
+#!/bin/bash
+
+read -p "Enter full path to image: " FILE_PATH
+
+FILENAME=$(basename "$FILE_PATH")
+RAW_BUCKET="img-raw-1-431451851290-us-east-1-an"
+API_URL="https://97yyl9mkn1.execute-api.us-east-1.amazonaws.com/def"
+
+echo "-----------------------------------"
+echo "[1] Requesting presigned URL..."
+echo "-----------------------------------"
+
+UPLOAD_URL=$(curl -s "$API_URL/upload?filename=$FILENAME" | jq -r '.upload_url')
+
+if [[ -z "$UPLOAD_URL" || "$UPLOAD_URL" == "null" ]]; then
+  echo "[ERROR] Failed to get presigned URL"
+  exit 1
+fi
+
+echo "[OK] Got presigned URL"
+echo "-----------------------------------"
+echo "[2] Uploading to S3..."
+echo "-----------------------------------"
+
+UPLOAD_RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X PUT -T "$FILE_PATH" "$UPLOAD_URL")
+UPLOAD_STATUS=$(echo "$UPLOAD_RESPONSE" | grep "HTTP_STATUS" | cut -d':' -f2)
+
+echo "Upload HTTP Status: $UPLOAD_STATUS"
+
+if [ "$UPLOAD_STATUS" != "200" ]; then
+  echo "[ERROR] Upload failed"
+  exit 1
+fi
+
+echo "[OK] Upload successful"
+echo "-----------------------------------"
+echo "[3] Waiting for pipeline (Lambda → Step Function)..."
+echo "-----------------------------------"
+
+sleep 5
+
+echo "[INFO] Requesting processed image link..."
+PROCESSED_URL=$(curl -s "$API_URL/processed?filename=$FILENAME")
+
+if [[ -z "$PROCESSED_URL" || "$PROCESSED_URL" == "null" ]]; then
+  echo "[ERROR] Failed to get processed image link"
+  exit 1
+fi
+
+echo "[OK] Processed image URL: $PROCESSED_URL"
+echo "-----------------------------------"
+echo "[DONE]"
