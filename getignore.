@@ -1,0 +1,35 @@
+# Python cache / artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# AWS Lambda deployment packages
+*.zip
+*.egg
+*.egg-info/
+
+# Local environment / virtualenv
+venv/
+.env
+.env.*
+
+# IDE / editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Media outputs / build artifacts
+*.mp4
+*.png
+
+# Other temp files
+*.tmp
