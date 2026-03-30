@@ -1,16 +1,16 @@
-# 🖼️ Serverless Micro Image Processor
+#  Serverless Micro Image Processor
 
 A fully serverless image processing pipeline on AWS. Upload an image, get back a resized and watermarked version — all without managing a single server.
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ![Architecture Diagram](architecture.png)
 
 ---
 
-## ⚙️ Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -25,30 +25,15 @@ A fully serverless image processing pipeline on AWS. Upload an image, get back a
 
 ## 🔄 Workflow
 
-```
-Client
-  │
-  ├─── 1. Request presigned upload URL  ──▶  API Gateway ──▶ Lambda
-  │
-  ├─── 2. Upload image directly ─────────▶  S3 (raw bucket)
-  │                                               │
-  │                                               ▼
-  │                                     S3 Trigger ──▶ Lambda
-  │                                                        │
-  │                                                        ▼
-  │                                             Step Functions
-  │                                            ┌─────────────┐
-  │                                            │  1. Resize  │
-  │                                            │  2. Watermark│
-  │                                            └─────────────┘
-  │                                                        │
-  │                                                        ▼
-  └─── 3. Request presigned download URL ◀── S3 (processed bucket)
-```
+1. **Client** requests a presigned upload URL via API Gateway
+2. **Image** is uploaded directly to S3
+3. **S3 trigger** invokes a Lambda function
+4. **Step Functions** orchestrates the processing: Resize → Watermark
+5. **Client** receives a presigned URL to download the processed image
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 image-processing-pipeline/
@@ -75,7 +60,7 @@ image-processing-pipeline/
 
 ---
 
-## 🚀 How to Run
+##  How to Run
 
 **1. Clone the repository**
 
@@ -107,7 +92,7 @@ https://<processed-image-url>
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
 - **Fully serverless** — no infrastructure to manage
 - **Event-driven** — S3 triggers kick off processing automatically
