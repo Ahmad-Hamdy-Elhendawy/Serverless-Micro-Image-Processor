@@ -1,7 +1,5 @@
 # Serverless-Micro-Image-Processor
 
-# Serverless-Micro-Image-Processor
-
 ## Overview
 This project implements a fully serverless image processing pipeline on AWS. It allows users to upload an image, automatically processes it (resize + watermark), and returns a secure URL to access the final image.
 
